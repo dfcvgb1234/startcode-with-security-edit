@@ -49,11 +49,9 @@ public class AuthenticationController {
   }
 
   @PostMapping("login")
-  public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+  public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
     LoginResponse login = getNewToken(request);
-
-      response.addCookie(new Cookie("token", login.getToken()));
 
       return ResponseEntity.ok(login);
       //throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Username or password wrong");
@@ -61,12 +59,10 @@ public class AuthenticationController {
   }
 
   @PostMapping("/logout")
-  public ResponseEntity<LoginResponse> logout(Principal principal, HttpServletResponse response) {
+  public ResponseEntity<LoginResponse> logout(Principal principal) {
 
 
     LoginResponse login = getLogoutToken(userWithRolesService.getCompleteDemoUser(principal.getName()));
-
-    response.addCookie(new Cookie("token", login.getToken()));
 
     return ResponseEntity.ok(login);
 
