@@ -8,18 +8,92 @@
    <h2>Test project for security</h2>
     <p>This is used for examination purposes</p>
 
+   <label>Username</label>
     <input name="username" id="username">
+   <label>Password</label>
     <input name="password" id="password">
 
-    <input type="button" id="login">
+    <button id="login">Login</button>
+    <button id="logout">logout</button>
+    <button id="test">Test Login</button>
+    <br>
+    <p id="result"></p>
 </body>
 <script>
 
-    window.addEventListener("load" => () {
-        const but = document.getElementById("login");
-        but.onClick = () => {
+    let webToken;
 
+    window.addEventListener("load", function() {
+    console.log("LOAD!")
+        const loginButton = document.getElementById("login");
+        const logoutButton = document.getElementById("logout");
+        const testButton = document.getElementById("test");
+
+        loginButton.onclick = async function() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const data = await fetchLogin(username, password);
+
+            webToken = data.token;
+            console.log(data);
         }
-    })
+
+        logoutButton.onclick = async function() {
+            const data = await fetchLogout();
+
+            webToken = data.token;
+            console.log(data);
+        }
+
+        testButton.onclick = async function() {
+            const data = await fetchTest();
+
+            console.log(data);
+
+            document.getElementById("result").innerText = data;
+        }
+    });
+
+    async function fetchLogin(username, password) {
+
+        info = {
+            username: username,
+            password: password
+        };
+
+        console.log(JSON.stringify(info))
+
+        return fetch("http://localhost:8080/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(info)
+        }).then((response) => response.json());
+    }
+
+    async function fetchLogout() {
+
+        console.log(webToken);
+
+        return fetch("http://localhost:8080/api/auth/logout", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + webToken
+            }
+        }).then((response) => response.json());
+    }
+
+    async function fetchTest() {
+        
+        console.log(webToken);
+
+        return fetch("http://localhost:8080/api/security-tests/user-only", {
+            headers: {
+                "Authorization": "Bearer " + webToken
+            }
+        }).then((response) => response.text());
+    }
 </script>
 </html>

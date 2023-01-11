@@ -37,4 +37,8 @@ public class UserWithRolesService {
     return new UserWithRolesResponse(user);
   }
 
+  public UserWithRoles getCompleteDemoUser(String id) {
+    return userWithRolesRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
+  }
+
 }
