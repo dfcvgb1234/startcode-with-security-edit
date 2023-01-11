@@ -29,11 +29,13 @@ public class UserWithRolesController {
         return userWithRolesService.getDemoUser(principal.getName());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin-only")
     public String getUserV2(Principal principal) {
         return "Only by admins. User name is:  " + principal.getName();
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/user-only")
     public String getUser(Principal principal) {
         return "Only by Users. User name is: " + principal.getName();
